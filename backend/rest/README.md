@@ -1,7 +1,7 @@
 # REST Best Practices
-In this guide we are going to describe BEEVA best practices for developing REST APIs
+In this guide we are going to describe BBVA Next Technologies best practices for developing REST APIs
 
-![BEEVA](https://github.com/beeva/beeva-best-practices/blob/master/static/horizontal-beeva-logo.png "BEEVA")
+![BBVA Next Technologies](static/next_logo "BBVA Next Technologies")
 
 ## Index
 
@@ -27,7 +27,8 @@ In this guide we are going to describe BEEVA best practices for developing REST 
 In this guide we are going to describe the best practices we consider most relevant at design time for a good REST API.
 
 According to Wikipedia's definition:
-* *Representational State Transfer (REST)* ***is the software architectural style*** *of the World Wide Web. REST gives a coordinated set of constraints to the design of components in a distributed hypermedia system that can lead to a higher-performing and more maintainable architecture.* [[1](#rest_wikipedia)]
+
+* *Representational state transfer (REST)* ***is a software architectural style*** *that defines a set of constraints to be used for creating Web services. Web services that conform to the REST architectural style, called RESTful Web services, provide interoperability between computer systems on the Internet. RESTful Web services allow the requesting systems to access and manipulate textual representations of Web resources by using a uniform and predefined set of stateless operations. Other kinds of Web services, such as SOAP Web services, expose their own arbitrary sets of operations. * [[1](#rest_wikipedia)] 
 
 This definition implies that REST is an architectural style rather than an implementation. When we want to refer to an implementation of this architecture, we refer to ***RESTFul***.
 
@@ -35,15 +36,17 @@ Use of REST APIs is often preferred over SOAP (Simple Object Access Protocol) st
 
 REST, which typically runs over HTTP (Hypertext Transfer Protocol), has several architectural constraints:
 
-1. Decouples consumers from producers
+1. Uniform interface  
 
-2. Stateless existence
+2. Client-server
 
-3. Able to leverage a cache
+3. Stateless
 
-4. Leverages a layered system
+4. Cacheable
 
-5. Leverages a uniform interface
+5. Layered system
+
+6. Code on demand
 
 REST style emphasizes that interactions between clients and services are enhanced by having a limited number of operations (verbs) to perform. Flexibility is provided by assigning resources (nouns) their own unique Universal Resource Identifiers (URIs). As each verb has a specific meaning (GET, POST, PUT, DELETE, ...), REST avoids ambiguity.
 
@@ -71,7 +74,7 @@ Some things to remember when constructing your URLs:
 - Nouns should be plural to make more easy to use for the users (or at least keep your criteria over the whole API)
 - Use the same noun with different HTTP methods to perform required actions over that resource.
 
-###Relations
+### Relations
 
 Related resources must be referenced in a hierarchical way, putting resource identifiers immediately after its noun. For example: 
 
@@ -81,8 +84,8 @@ Related resources must be referenced in a hierarchical way, putting resource ide
 ```
 
 
-###Versioning
-It is strongly recommended to use a version number for *every release** of your API. To avoid ambiguity with identifiers, we recommend to use a 'v' preceding the version number as part of URLs.
+### Versioning
+It is strongly recommended to use a version number for **every release** of your API. To avoid ambiguity with identifiers, we recommend to use a 'v' preceding the version number as part of URLs.
 
 Only put the **MAJOR** version number, never the MINOR or PATCH. For example don't use v1.2 or v2.1.3.
 
@@ -224,7 +227,9 @@ Method: POST
 | ----------------------- | ---------- | ------------------------------------- |
 |Successfully created	|201		|Empty					|
 |Bad Request		|400		|codeError and description	|
-|Invalid credentials	|401		|codeError and description	|
+|Invalid credentials (Unauthorized)	| 401		|codeError and description	|
+|Forbidden	| 403		|codeError and description	|
+|Internal Server Error	|500		|codeError and description	|
 
 ---
 
@@ -351,7 +356,9 @@ They are used to inform the user of errors in valid requests
 |Code      | Message |  Description |
 | ------------- | -------------| ------------|
 | 500 | Internal Server Error | Generic code indicating an unexpected error |
+| 502 | Bad Gateway | The server was acting as a gateway or proxy and received an invalid response from the upstream server |
 | 503 | Service Unavailable | The server is currently unable to handle the request due to a temporary overloading or maintenance of the server|
+| 504 | Gateway Timeout | The server was acting as a gateway or proxy and did not receive a timely response from the upstream server|
 
 ---
 
@@ -436,10 +443,10 @@ An API that uses the Link header can return a set of ready-made links so the API
 
 ---
 ```html
-Link: <https://www.beeva.com/sample/api/v1/cars?offset=15&limit=5>; rel="next",
-<https://www.beeva.com/sample/api/v1/cars?offset=50&limit=3>; rel="last",
-<https://www.beeva.com/sample/api/v1/cars?offset=0&limit=5>; rel="first",
-<https://www.beeva.com/sample/api/v1/cars?offset=5&limit=5>; rel="prev"
+Link: <https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=15&limit=5>; rel="next",
+<https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=50&limit=3>; rel="last",
+<https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=0&limit=5>; rel="first",
+<https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=5&limit=5>; rel="prev"
 ```
 ---
 
@@ -470,16 +477,16 @@ As an alternative, you can also include pagination information as part of respon
     "page_size": 3,
     "links": {
       "first": {
-        "href": "https://www.beeva.com/sample/api/v1/cars?offset=0&limit=5"
+        "href": "https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=0&limit=5"
       },
       "prev": {
-        "href": "https://www.beeva.com/sample/api/v1/cars?offset=5&limit=5"
+        "href": "https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=5&limit=5"
       },
       "next": {
-        "href": "https://www.beeva.com/sample/api/v1/cars?offset=15&limit=5"
+        "href": "https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=15&limit=5"
       },
       "last": {
-        "href": "https://www.beeva.com/sample/api/v1/cars?offset=50&limit=3"
+        "href": "https://www.bbvanexttechnologies.com/sample/api/v1/cars?offset=50&limit=3"
       }
     }
   },
@@ -599,6 +606,8 @@ As a specification of our APIs we use [Semantic Versioning](http://semver.org/).
 Theses are the main rules about this specification
 
 * A normal version number MUST take the form X.Y.Z where X, Y, and Z are non-negative integers, and MUST NOT contain leading zeroes. X is the major version, Y is the minor version, and Z is the patch version. Each element MUST increase numerically. For instance: 1.9.0 -> 1.10.0 -> 1.11.0.
+
+* Once a versioned package has been released, the contents of that version MUST NOT be modified. Any modifications MUST be released as a new version.
 
 * Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.
 
@@ -832,5 +841,5 @@ This endpoint **should not be published to third party applications** because th
 
 ___
 
-[BEEVA](https://www.beeva.com) | Technology and innovative solutions for companies
+[BBVA Next Technologies](https://www.bbvanexttechnologies.com) | Tech minds creating the feature
 
