@@ -21,23 +21,24 @@ The following contents table provides an index of the contents covered in this g
 * [11. Logging](#11-logging)
 * [12. String treatment](#12-string-treatment)
 * [13. Operators](#13-operators)
-* [14. Exceptions](#14-exceptions)
-* [15. Input Output](#15-input-output)
-* [16. Command line interface parameters](#16-command-line-interface-parameters)
-* [17. Configuration files](#17-configuration-files)
-* [18. Static code analysis](#18-static-code-analysis)
-* [19. Testing](#19-testing)
-* [20. Project structure](#20-project-structure)
-* [21. Application packaging and distribution](#21-application-packaging-and-distribution)
-* [22. Development Environments (IDEs)](#22-development-environments-ides)
-* [23. Library and virtual environment management](#23-library-and-virtual-environment-management)
-* [24. Future Improvments](#24-future-improvements)
-* [25. References](#24-references)
+* [14. Asyncio](#14-asyncio)
+* [15. Exceptions](#15-exceptions)
+* [16. Input Output](#16-input-output)
+* [17. Command line interface parameters](#17-command-line-interface-parameters)
+* [18. Configuration files](#18-configuration-files)
+* [19. Static code analysis](#19-static-code-analysis)
+* [20. Testing](#20-testing)
+* [21. Project structure](#21-project-structure)
+* [22. Application packaging and distribution](#22-application-packaging-and-distribution)
+* [23. Development Environments (IDEs)](#23-development-environments-ides)
+* [24. Library and virtual environment management](#24-library-and-virtual-environment-management)
+* [25. Future Improvments](#25-future-improvements)
+* [26. References](#26-references)
 
 
 ### 1. Introduction
 
-Python is a general purpose and high level programming language created by [Guido van Rossum](https://en.wikipedia.org/wiki/Guido_van_Rossum) in 1989. The first public release was made in 1991 (0.9.0) and it reached version 1.0 in 1994. As the time of this writing, Python 2.7.10 and Python 3.5.0 are considered as the stable versions.
+Python is a general purpose and high level programming language created by [Guido van Rossum](https://en.wikipedia.org/wiki/Guido_van_Rossum) in 1989. The first public release was made in 1991 (0.9.0) and it reached version 1.0 in 1994. As the time of this writing, Python 2.7.17 and Python 3.8.0 are considered as the stable versions.
 
 The language allows the programmer to choose between different programming paradigms, although some are more supported than others:
 * Procedural.
@@ -115,9 +116,9 @@ There are other areas where Python's philosophy affects development:
 
 ### 3. Python 2 vs Python 3
 
-When people talk or write for what version they should use of Python, the typical response is this appointment: “Python 2.x is legacy, Python 3.x is the present and future of the language” [1]. For this reason Python 3 should be used in new projects, especially if the project will be long in time. Because Python 2.x won’t receive new improvements, it only has bug support and it will finish in 2020 [2].
+When people talk or write for what version they should use of Python, the typical response is this appointment: “Python 2.x is legacy, Python 3.x is the present and future of the language” [1]. For this reason Python 3 should be used in new projects, especially if the project will be long in time. Because Python 2.x won’t receive new improvements, it only has bug support and it will finish in 2020 [2] because will cease to be maintained as of 1 of January.
 
-The biggest disadvantage of Python 3 is the support from libraries, frameworks, packages… Because nowadays we have libraries which are only supported in Python 2.x, but this problem is fixing bit by bit. For this reason we only should use Python 2.x if our project requires a library that is only supported in Python 2.x. If the project will use Python 2.x, we should write the code thinking in the future port to Python 3.x. For this reason we can start writing code using the following:
+In last years, the biggest disadvantage of Python 3 was the support from libraries, frameworks, packages. Today, the most of libraries are compatibles with Python 3. For this reason Python 3 is mandatory to use in new projects. If the project will use Python 2.x, we should write the code thinking in the future port to Python 3.x. For this reason we can start writing code using the following:
 
 * modules `__future__`
 * Create class with inheritance from base class `Object`
@@ -294,7 +295,7 @@ Tabs should be used solely to remain consistent with code that is already indent
 As spaces and tabs are allowed python will fail if tabs and spaces are mixed at the same file.
 
 #### 5.3. Maximum Line Length
-Limit all lines to a maximum of 79 characters.
+Try to keep line lengths less than 79 characters, unless you have a special situation where longer lines would improve readability. 
 
 ```python
 with open('/path/to/some/file/you/want/to/read') as file_1, \
@@ -321,7 +322,7 @@ class Rectangle(Blob):
                       color, emphasis, highlight)
 ```
 
-The maximum of 79 characters was decided when screens where shorter than current ones. Actually some projects decide to increase the number of characters to 99.
+The maximum of 79 characters was decided when screens where shorter than current ones. As a hard limit, keep all lines less than 119 characters (which is the width of GitHub code review).
 
 #### 5.4. Blank Lines
 Surround top-level function and class definitions with two blank lines.
@@ -525,6 +526,8 @@ if foo == 'blah': one(); two(); three()
 
 #### 5.10 Comments
 
+Comments that contradict the code are worse than no comments. Always make a priority of keeping the comments up-to-date when the code changes.
+
 Write your comments in English.
 
 #### 5.10.1 Block Comments
@@ -601,14 +604,13 @@ The X11 library uses a leading X for all its public functions. In Python, this s
 
 In addition, the following special forms using leading or trailing underscores are recognized (these can generally be combined with any case convention):
 
-_single_leading_underscore : weak "internal use" indicator. E.g. from M import * does not import objects whose name starts with an underscore.
+  - _single_leading_underscore : weak "internal use" indicator. E.g. from M import * does not import objects whose name starts with an underscore.
 
-single_trailing_underscore_ : used by convention to avoid conflicts with Python keyword, e.g.
+  - single_trailing_underscore_ : used by convention to avoid conflicts with Python keyword, e.g.
 
-Tkinter.Toplevel(master, class_='ClassName')
-__double_leading_underscore : when naming a class attribute, invokes name mangling (inside class FooBar, __boo becomes _FooBar__boo ; see below).
+  - Tkinter.Toplevel(master, class_='ClassName') __double_leading_underscore : when naming a class attribute, invokes name mangling (inside class FooBar, __boo becomes _FooBar__boo ; see below).
 
-__double_leading_and_trailing_underscore__ : "magic" objects or attributes that live in user-controlled namespaces. E.g. __init__ , __import__ or __file__ . Never invent such names; only use them as documented.
+  - __double_leading_and_trailing_underscore__ : "magic" objects or attributes that live in user-controlled namespaces. E.g. __init__ , __import__ or __file__ . Never invent such names; only use them as documented.
 
 #### 5.12.3 Prescriptive: Naming Conventions
 
@@ -796,7 +798,7 @@ An example of a simple function would be:
 
 ```python
 def hello():
-    print 'hi there!'
+    print('hi there!')
 ```
 
 While the call to that very same function it is performed as:
@@ -961,16 +963,16 @@ Example:
 ```python
 ...
 if len(sys.argv) < 2:
-    print 'No action specified.'
+    print('No action specified.')
     sys.exit()
 
 if sys.argv[1].startswith('--'):
     option = sys.argv[1][2:]
 
     if option == 'version':
-        print 'Version 1.00'
+        print('Version 1.00')
     elif option == 'help':
-        print '''\
+        print('')
 ...
 ```
 #### 10.2 Os module
@@ -993,14 +995,14 @@ Example:
 ```python
 import time
 
-print 'gmtime   :', time.gmtime()
-print 'localtime:', time.localtime()
-print 'mktime   :', time.mktime(time.localtime())
+print('gmtime: {}'.format(time.gmtime()))
+print('localtime: {}'.format(time.localtime()))
+print('mktime: {}'.format(time.mktime(time.localtime())))
 
 t = time.localtime()
-print 'Day of month:', t.tm_mday
-print ' Day of week:', t.tm_wday
-print ' Day of year:', t.tm_yday
+print('Day of month: {}'.format(t.tm_mday))
+print('Day of week: {}'.format(t.tm_wday))
+print('Day of year: {}'.format(t.tm_yday))
 ```
 
 #### 10.4 Math module
@@ -1010,8 +1012,8 @@ The math module implements many of the IEEE functions that would normally be fou
 ```python
 import math
 
-print 'π: %.30f' % math.pi
-print 'e: %.30f' % math.e
+print('π: %.30f' % math.pi)
+print('e: %.30f' % math.e)
 ```
 
 #### 10.5 String module
@@ -1025,19 +1027,115 @@ import string
 
 s = 'The quick brown fox jumped over the lazy dog.'
 
-print s
-print string.capwords(s)
+print(s)
+print(string.capwords(s))
 ```
 ### 11. Logging
 
-Use logging config files instead of code-logging to avoid make changes into your code every time you want to change some aspect of your logging, whenever your project allows it.
-In addition, config files allow to change in runtime your logging configuration whether you use:
+The logging module has been a part of Python’s Standard Library since version 2.3. It is succinctly described in PEP 282.
+
+Logging serves two purposes:
+  - Diagnostic logging records events related to the application’s operation. If a user calls in to report an error, for example, the logs can be searched for context.
+  - Audit logging records events for business analysis. A user’s transactions can be extracted and combined with other user details for reports or to optimize a business goal.
+
+Best practice when instantiating loggers in a library is to only create them using the __name__ global variable: the logging module creates a hierarchy of loggers using dot notation, so using __name__ ensures no name collisions.
+
+There are at least three ways to configure a logger:
+
+#### Using an INI-formatted file:
+  - Pro: possible to update configuration while running using the function logging.config.listen() to listen on a socket.
+  - Con: less control (e.g. custom subclassed filters or loggers) than possible when configuring a logger in code.
+  
+##### Example
+Let us say the file is named logging_config.ini.
 
 ```python
-logging.config.listen()
+keys=root
+
+[handlers]
+keys=stream_handler
+
+[formatters]
+keys=formatter
+
+[logger_root]
+level=DEBUG
+handlers=stream_handler
+
+[handler_stream_handler]
+class=StreamHandler
+level=DEBUG
+formatter=formatter
+args=(sys.stderr,)
+
+[formatter_formatter]
+format=%(asctime)s %(name)-12s %(levelname)-8s %(message)s
 ```
 
+Then use logging.config.fileConfig() in the code:
 
+```python
+import logging
+from logging.config import fileConfig
+
+fileConfig('logging_config.ini')
+logger = logging.getLogger()
+logger.debug('this is an example of {}'.format('logging'))
+```
+
+#### Using a dictionary or a JSON-formatted file:
+  - Pro: in addition to updating while running, it is possible to load from a file using the json module.
+  - Con: less control than when configuring a logger in code.
+
+##### Example
+You can use a dictionary with configuration details. PEP 391 contains a list of the mandatory and optional elements in the configuration dictionary.
+
+```python
+import logging
+from logging.config import dictConfig
+
+logging_config = dict(
+    version = 1,
+    formatters = {
+        'f': {'format':
+              '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'}
+        },
+    handlers = {
+        'h': {'class': 'logging.StreamHandler',
+              'formatter': 'f',
+              'level': logging.DEBUG}
+        },
+    root = {
+        'handlers': ['h'],
+        'level': logging.DEBUG,
+        },
+)
+
+dictConfig(logging_config)
+
+logger = logging.getLogger()
+logger.debug('this is an example of {}'.format('logging'))
+```  
+  
+  
+#### Using code:
+  - Pro: complete control over the configuration.
+  - Con: modifications require a change to source code.
+
+##### Example
+```python
+import logging
+
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+        '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+logger.debug('this is an example of {}'.format('logging'))
+```
 
 
 ### 12. String treatment
@@ -1299,7 +1397,7 @@ To do a loops for x length use statement **for** with function **range** in Pyth
 
 ```python
 >>>for i in range(5):
-...  print i
+...  print(i)
 0
 1
 2
@@ -1307,24 +1405,103 @@ To do a loops for x length use statement **for** with function **range** in Pyth
 4
 ```
 
+### 14. Asyncio
 
-### 14. Exceptions
+asyncio is a library to write asynchronous applications. It is the most efficient way to implement a network server having to handle many concurrent users. This library is popular than other libraries and frameworks for its impressive speed and various use. This library is used in python to create, execute and structure coroutines and handle multiple tasks concurrently without doing the tasks in parallel. The major parts of this library are defined below:
+
+  - Coroutine: The part of code that can be paused and resumed in multi-threaded script is called coroutine. coroutines work cooperatively in multi-threaded program. When one coroutine pauses then other coroutine can execute.
+  - Event loop: It is used to start the execution of coroutines and handle input/output operations. It takes multiple tasks and complete them.
+  - Task: The execution and the result of coroutines are defined by the tasks. You can assign multiple number of tasks using asyncio library and run the tasks asynchronously.
+  - Future: It acts as a future storage where the result of coroutines will store after completion. This is useful when any coroutine requires to wait for the result of other coroutine.
+
+How you can implement the above concepts of asyncio is shown by using some simple examples.
+
+#### 14.1 Example simple coroutine 
+
+This example uses the run_until_complete() method to schedule a simple function that will wait one second, print hello and then finish.
+
+```python
+import asyncio
+
+async def say(what, when):
+    await asyncio.sleep(when)
+    print(what)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(say('hello world', 1))
+loop.close()
+```
+
+#### 14.2 Example for creating tasks
+
+This example shows how you can schedule multiple coroutines in the event loop, and then run the event loop.
+
+Notice that this example will print second_hello before first_hello, as the first task scheduled waits longer that the second one before printing.
+
+Also note that this example will never terminate, as the loop is asked to run_forever.
+
+```python
+import asyncio
+
+async def say(what, when):
+    await asyncio.sleep(when)
+    print(what)
+
+
+loop = asyncio.get_event_loop()
+
+loop.create_task(say('first hello', 2))
+loop.create_task(say('second hello', 1))
+
+loop.run_forever()
+loop.close()
+```
+
+#### 14.3 Example for stopping the loop
+
+This third example adds another task that will stop the event loop before all scheduled tasks could execute.
+
+```python
+import asyncio
+
+async def say(what, when):
+    await asyncio.sleep(when)
+    print(what)
+
+async def stop_after(loop, when):
+    await asyncio.sleep(when)
+    loop.stop()
+
+
+loop = asyncio.get_event_loop()
+
+loop.create_task(say('first hello', 2))
+loop.create_task(say('second hello', 1))
+loop.create_task(say('third hello', 4))
+loop.create_task(stop_after(loop, 3))
+
+loop.run_forever()
+loop.close()
+```
+
+
+### 15. Exceptions
 
 Python handles all errors with exceptions.
 
 An exception is a signal that an error has occurred. There are a number of built-in exceptions for example dividing by zero. You can also define your own exceptions creating a class that inherits from Exception.
 
 
-#### 14.1. Catching exceptions
+#### 15.1. Catching exceptions
 
 In order to handle errors, you can set up exception handling blocks in your code. The keywords try and except are used to catch exceptions. When an error occurs within the try block, Python looks for a matching except block to handle it. If there is one, execution jumps there.
 
 
 ```python
 try:
-    print 5/0
+    print(5/0)
 except ZeroDivisionError:
-    print "My error message"
+    print("My error message")
 ```
 
 
@@ -1340,13 +1517,13 @@ def function2(param):
     else: return "ok"
 
 try:
-    print function1(-100)
+    print(function1(-100))
 except ValueError:
-    print "My error message"
+    print("My error message")
 ```
 
 
-#### 14.2. Custom Exceptions
+#### 15.2. Custom Exceptions
 
 ```python
  class MyCustomException(Exception):
@@ -1362,11 +1539,11 @@ Using that exception:
 try:
     raise MyCustomException("My error message")
 except MyCustomException, (instance):
-    print "Caught: " + instance.parameter
+    print("Caught: " + instance.parameter)
 ```
 
 
-#### 14.3 Recovering and continuing with finally
+#### 15.3 Recovering and continuing with finally
 
 
 Finally clause allows programmers to close such resources in case of an exception.
@@ -1376,24 +1553,24 @@ Finally clause allows programmers to close such resources in case of an exceptio
 try:
     result = x / y
 except ZeroDivisionError:
-    print "division by zero!"
+    print("division by zero!")
 else:
-    print "result is", result
+    print("result is", result)
 finally:
-    print "executing finally clause"
+    print("executing finally clause")
 ```
 
-#### 14.4 Built-in Exceptions
+#### 15.4 Built-in Exceptions
 
 The exceptions are defined in the module exceptions. This module does not needs to be imported: the exceptions are provided in the built-in namespace as well as the exceptions module.
 
 [Built-in Exceptions](https://docs.python.org/2/library/exceptions.html)
 
 
-### 15. Input Output
+### 16. Input Output
 In this chapter, the basics of input and output in Python will be explained. If the programmer needs more advanced tips, go to the official documentation.
 
-#### 15.1 Print
+#### 16.1 Print
 Like others programming languages, Python have a function for print the result in console. This function is easy to use, it is only necessary to call the function with a string and it will be writen in the console. The programmer needs to remember that this function has changed in Python 3 with respect to Python 2. For this reason it is advisable to use this function always with parenthesis, because this is mandatory in Python 3 while it is optional in Python 2. Examples below:  
 
 ```python
@@ -1419,7 +1596,7 @@ On the other hand, if the programer wants to print big Python objects, it has a 
 {1: ['1111111111111111', '2', '33333333333333333333333'], 3: '444444444444444444444444444444444444', 5: {1: '333333333333333333333333333333333333333333333'}}
 ```
 
-#### 15.2 Input
+#### 16.2 Input
 
 Python have a function to read from console inputs and it can be used to interact with the user. The name of the function is raw_input() in Python 2 and input() in Python 3. This function will read lines until the user press enter and it will transform the lines to string.
 Example:
@@ -1432,11 +1609,11 @@ Tell your age
 '35'
 ```
 
-#### 15.3 Files
+#### 16.3 Files
 
 This chapter is to explain how the files work in Python.
 
-##### 15.3.1 Open
+##### 16.3.1 Open
 To work with files is necessary open them before using them. This is done with the following line:
 
 ```python
@@ -1459,7 +1636,7 @@ with open(filename, mode) as f:
 
 With this code if you don't close the file, it will raise a exception.
 
-##### 15.3.2 Read
+##### 16.3.2 Read
 
 To read a file in python there exists several methods:
 
@@ -1467,7 +1644,7 @@ To read a file in python there exists several methods:
 * file.readline(): Read a single line. It stops when find a \n. When the end of the file has been reached it returns an empty string ("").
 * To save all lines in a list, it is possible used this list(f) or file.readlines()
 
-##### 15.3.3
+##### 16.3.3
 
 To write, it is only necessary to call this function:
 
@@ -1477,16 +1654,16 @@ file.write(“some thing”)
 
 The writer function only accepts Strings.
 
-##### 15.3.4
+##### 16.3.4
 When finished the use of the file, the programmer must close it to unlock the resource:
 
 ```python
 file.close()
 ```
 
-### 16. Command line interface parameters
+### 17. Command line interface parameters
 For input parameters parse it is recommended to user a library that allows as an easy parsing with minimum effort. There are some libraries to do this but argparse is recommended.
-#### 16.1 argparse
+#### 17.1 argparse
 Argparse is recommended because it provides us diferente number of tools and parsing options:
 * Include help for each parameter
 * Define parameters type
@@ -1496,7 +1673,7 @@ Argparse is recommended because it provides us diferente number of tools and par
 * Add more than one value to a parameter
 * Add automatic actions to the parameters
 
-#### 16.2 Examples
+#### 17.2 Examples
 
 ```python
 parser = argparse.ArgumentParser(description='Program description')
@@ -1515,7 +1692,7 @@ parser.add_argument("-v", "--verbose", action="store_true", default=False,
 [Argparse](https://docs.python.org/2/howto/argparse.html)
 
 
-### 17. Configuration files
+### 18. Configuration files
 
 Use the ConfigParser module to manage user-editable configuration files for an application. The configuration files are organized into sections, and each section can contain name-value pairs for configuration data.
 
@@ -1533,12 +1710,12 @@ password = miguel_secret
 Reading Configuration Files
 
 ```python
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 
-parser = SafeConfigParser()
+parser = ConfigParser()
 parser.read('simple.ini')
 
-print parser.get('seccion_A', 'username')
+print(parser.get('seccion_A', 'username'))
 ```
 
 Modifying Settings
@@ -1546,32 +1723,32 @@ Modifying Settings
 While SafeConfigParser is primarily intended to be configured by reading settings from files, settings can also be populated by calling add_section() to create a new section, and set() to add or change an option.
 
 ```python
-import ConfigParser
+import configparser
 
-parser = ConfigParser.SafeConfigParser()
+parser = configparser.ConfigParser()
 
 parser.add_section('seccion_A')
 parser.set('seccion_A', 'username', 'miguel')
 parser.set('seccion_A', 'password', 'miguel_secret')
 
 for section in parser.sections():
-    print section
+    print(section)
     for name, value in parser.items(section):
-        print '  %s = %r' % (name, value)
+        print('  {0} = {1}'.format((name, value)))
 ```
 
 
 Sections and options can be removed from a SafeConfigParser with remove_section() and remove_option()
 
 ```python
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 
-parser = SafeConfigParser()
+parser = ConfigParser()
 parser.read('multisection.ini')
 
-print 'Read values:\n'
+print('Read values:\n')
 for section in parser.sections():
-    print section
+    print(section)
     for name, value in parser.items(section):
         ...
 
@@ -1584,10 +1761,10 @@ parser.remove_section('section_B')
 Saving Configuration Files
 
 ```python
-import ConfigParser
+import configparser
 import sys
 
-parser = ConfigParser.SafeConfigParser()
+parser = configparser.ConfigParser()
 
 parser.add_section('section_A')
 parser.set('section_A', 'name', 'Miguel')
@@ -1595,7 +1772,7 @@ parser.set('section_A', 'name', 'Miguel')
 parser.write(sys.stdout)
 ```
 
-#### 17.2 YAML
+#### 18.2 YAML
 
 YAML is a configuration file format
 
@@ -1642,20 +1819,20 @@ mysql
  'use_anonymous': True}
 ```
 
-### 18. Static code analysis
+### 19. Static code analysis
 The static analysis helps us to analyse some errors without needing to run the program. With this type of tools we can detect some coding errors like style guide rules, good practices, unused variables, syntax errors... What this tools will never detect are run time errors because the code is not executed during the analysis. With this tool we can detect problems on our code at very early phases, so it is recommended to run it frequenly.
 
-### 18.1 Pylint
+### 19.1 Pylint
 Pylint is a tool to do static analysis of the code. The tools is preconfigured to use the most common rules including the style guide rules, but this rules can be updated if it is needed.
 
-#### 18.1.1 Execution
+#### 19.1.1 Execution
 Running pylint is as simple as this:
 ```shell
 pylint my_programa.py
 ```
 More than one file is supported at eh same file
 
-#### 18.1.2 Output
+#### 19.1.2 Output
 The pylint output is large, and but we can center our effort on the error messages. These are the different type of errors:
 * [R]efactor for a “good practice” metric violation
 * [C]onvention for coding standard violation
@@ -1685,7 +1862,7 @@ Your code has been rated at 9.68/10 (previous run: 9.79/10, -0.11)
 ```
 It is usually easy to achieve a 9 or better. Sometimes because code logic is impossible to achieve a 10, but we must try.
 
-#### 18.1.3 Configuration
+#### 19.1.3 Configuration
 It is posible to change or avoid some rules which are different for our project. For example you can decide to use a different style guide than the original. The first step to change configuration is to show which configuration we are using, to do this we can launch pylint with “--generate-rcfile” option. The output of the call will be all the rules:
 
 ```shell
@@ -1733,12 +1910,12 @@ It is very common to change the max characters per line from 80 to 100. So the c
 max-line-length=120
 ```
 
-### 19. Testing
-#### 19.1. Tests
+### 20. Testing
+#### 20.1. Tests
 
 Python has in their core the package **unittest**, this package has the basic class **TestCase** to create your test with their function to initialized the test and finished. This class have a lot of different assert to do your test, use theirs.
 
-#### 19.2. Example
+#### 20.2. Example
 
 Example:
 ```python
@@ -1799,7 +1976,7 @@ In case of testing our code we must import it and call each method. The good pra
 Follow all this test practices is easy if we respect others good practices keeping methods simple and complexity low.
 
 
-#### 19.3. Mocks
+#### 20.3. Mocks
 
 Tests should be isolated. Don't interact with a real database or network. Use a separate test database that gets torn down or use mock objects.
 
@@ -1811,7 +1988,7 @@ Because too many mocks can complicate a test, making it harder for you to track 
 
 The following sections introduce some testing examples using Mock.
 
-##### 19.3.1. Mocking functions
+##### 20.3.1. Mocking functions
 
 Let's assume we are testing the following module:
 
@@ -1861,7 +2038,7 @@ Mock allows us to control the result the mocked function generates using *return
 
 In addition, Mock provides different assertions that we can use to ensure that the mocked function has been called correctly. In our example we are using the *assert_called_once_with* method, which allows us to check that the function has been called only once, and that the arguments passed to it are correct.
 
-##### 19.3.2. Mocking classes
+##### 20.3.2. Mocking classes
 
 We can also use Mock to mock classes. Consider the following code:
 
@@ -1917,11 +2094,11 @@ In this case we are mocking the *WeatherAPIService* class in the place where it 
 
 The Mock library is very powerful and you should use it in your Python unit tests to avoid interacting with real databases or networks. You can find more information about Mock in the following link: https://docs.python.org/3/library/unittest.mock.html
 
-#### 19.4 Coverage
+#### 20.4 Coverage
 The coverage is the code mesure for the tests that allows as to know how much of the code is being tested. With this we can have an idea of the quality of the tests.
 
-##### 19.4.1 Tools
-###### 19.4.1.1 Coverage
+##### 20.4.1 Tools
+###### 20.4.1.1 Coverage
 overage is a external package that is recommended to verify the coverage of your code. It is easy to use:
 
 * Discover and execute the test with this code:
@@ -1932,7 +2109,7 @@ overage is a external package that is recommended to verify the coverage of your
 
 ```coverage html```
 
-###### 19.4.1.2 Nosetest
+###### 20.4.1.2 Nosetest
 Nosetest is a tool that allow as to launch multiple UT files at the same time, like launching a complete directory tests. Also it allows us parallelization, that became important as the program and tests grow. To launch a test file we can simply do this:
 ```shell
 nosetests action.py gitrepo.py
@@ -1977,31 +2154,31 @@ OK
 Also the html report is generated showing this:
 ![Coverage example](./static/coverage.png "Coverage example")
 
-### 20. Project structure
+### 21. Project structure
 
 Projects in Python can have different structures depending on the target that they have, or depending on the needs and policies of development teams. In general, Python does not introduce hard requirements in this aspect and the development team has flexibility to decide on the best approach.
 
-#### 20.1. Top level folders
+#### 21.1. Top level folders
 
 In relation to project folders, the following ones are to be considered into account:
 
 * doc: To keep project documentation, which can be in any type of format.
 * projectname: This one would be the one to keep the project's code. The chosen name is usually the name of the project as opposed to src in other languages. One thing worth noting is that the subfolders of this project should have the __init__.py file so that Python understands that they contain code.
 
-#### 20.2. Top level files
+#### 21.2. Top level files
 
 * README: The readme file that contains the introduction and main description of the project. Usually in markdown format in order to work with github or simiral solutions.
 * LICENSE: It describes the licensing scheme of the project.
 * requirements.txt: It contains the dependencies of the Python application. It is generally used to ensure that the required dependencies are installed before the application's installation. Both manual or automatic installations of the application make use of it.
 * setup.py: Describes the way to install the project. It is used both in manual and automatic installations.
 
-#### 20.3 Example
+#### 21.3 Example
 
 As a reference example, the following link shows the structure of a Python project for distributing it in PyPI (please see section 18):
 
 https://pypi.python.org/pypi/an_example_pypi_project
 
-### 21. Application packaging and distribution
+### 22. Application packaging and distribution
 
 In Python, there are several ways for packaging and distributing applications, libraries or frameworks. Depending on the case, one might be more suitable than others. As an overview, the following is a list of the available alternatives:
 
@@ -2009,7 +2186,7 @@ In Python, there are several ways for packaging and distributing applications, l
 * Package for Linux distributions
 * Application freezing
 
-#### 21.1 PyPI
+#### 22.1 PyPI
 
 The most well known distribution scheme is PyPI (Python Package Index). This makes the application freely available to anyone that uses Python to download it through pip. It is the recommended solution for open source projects since other developers will expect an active and well maintained project to be available in this form.
 
@@ -2021,7 +2198,7 @@ Additionally, the following tutorial indicates how to work with PyPI in order to
 
 https://wiki.python.org/moin/CheeseShopTutorial
 
-#### 21.2 Package for Linux distributions
+#### 22.2 Package for Linux distributions
 
 It is possible to package Python code in a native package of a Linux distribution. This would be a .deb package in Debian and derivative distros and .rpm packages in RHEL and derivatives. The package would be then available for installation through the distribution repositories or personal repositories would need to be created in the case of proprietary software.
 
@@ -2029,7 +2206,7 @@ If the company already has a policy for software packaging and other software it
 
 For more information on packaging an application for a Linux distribution, please refer to the documentation of each distribution or packaging system.
 
-#### 21.3 Application freezing
+#### 22.3 Application freezing
 
 For the cases when Python might not be installed in the systems where the application is going to be deployed, it is possible to employ the application freezing procedure. With this approach, the package provided also contains the Python interpreter so that the package alone is sufficient to execute the application. When the distribution targets environments such as Windows, this could be a eligible approach.
 
@@ -2037,7 +2214,7 @@ For more information on application freezing, please see:
 
 http://docs.python-guide.org/en/latest/shipping/freezing/#freezing-your-code-ref
 
-### 22. Development Environments (IDEs)
+### 23. Development Environments (IDEs)
 
 To develop a Python program, it isn’t necessary to have a IDE. You can develop it in a text editor, for example gedit, Sublime Text, Atom… and run it in the Python console. But if you want an IDE to develop, because you want features such as debugger, autocomplete… Nowadays exist a lot of them for Python, both commercial and noncommercial and they have different features. This document will list only the most popular at this moment (you should know there exist other options) and it won’t compare which is the best IDE. You are free to decide which one to use.
 
@@ -2063,11 +2240,11 @@ List of IDEs:
 
 You can discovered other IDEs for Python and their description in the following link:
 
-### 23. Library and virtual environment management
+### 24. Library and virtual environment management
 
 This chapter explains how to add new libraries or packages to the project. This is possible thanks to pip and when you use PIP, it is necessary to explain virtual environments.
 
-#### 23.1. pip
+#### 24.1. pip
 
 PIP is the package manager for Python. When the project needs an extra library, it’s really easy to add it. If the package exists in PIP, just execute the following command to install it:
 
@@ -2099,7 +2276,7 @@ The documentation can be read in the next link:
 
 <https://pip.readthedocs.org/en/stable/>
 
-#### 23.2. virtualenv
+#### 24.2. virtualenv
 
 Virtualenv is a tool to generate a virtual environments for Python. It is really useful, because when in the same machine you have several projects that use different Python version and different packages, you can have conflicts among themselves or need to use the same package with different versions. This is difficult to handle without a tool like virtualenv. With virtualenv you don't install packages globally on your system, you install packages in an isolated way in your virtualenv. For this reasons and because it is a bad practice, you should never install packages globally in python without create a virtualenv and use pip with sudo.
 
@@ -2121,7 +2298,7 @@ Of course virtualenv has several options, as you can see in the documentation:
 
 <http://virtualenv.readthedocs.org/en/latest/index.html>
 
-### 24. Future Improvements
+### 25. Future Improvements
 
 * Python installation
 * More logging library information
@@ -2137,7 +2314,7 @@ Of course virtualenv has several options, as you can see in the documentation:
 * Find dead code
 
 
-### 25. References
+### 26. References
 
 The following is the reference list used during the development of this best practices guide. Please follow the links in order to obtain further information regarding Python programming and best practices:
 
@@ -2158,5 +2335,5 @@ The following is the reference list used during the development of this best pra
 
 ___
 
-[BEEVA](https://www.beeva.com) | Technology and innovative solutions for companies
+[BBVA Next Technologies](https://www.https://www.bbvanexttechnologies.com) | Technology and innovative solutions for companies
 
